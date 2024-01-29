@@ -56,19 +56,13 @@ server {
 
     location /member {
 
-        client_max_body_size    5m;
+          client_max_body_size    5m;
 
         proxy_pass http://localhost:6001;
 
-        proxy_set_header Host $http_host;
+        proxy_set_header Host $host;
 
         proxy_set_header X-Real-IP $remote_addr;
-
-        proxy_set_header X-Scheme $scheme;
-
-        proxy_set_header Upgrade $http_upgrade;
-
-        proxy_set_header Connection "upgrade";
 
     }
 
@@ -118,7 +112,7 @@ server {
 
 1、账户注册 生成多货币账户；后续新加入货币，使用定时任务生成或者脚本；
 
-2、购买幂等：通过数据库悲观 select for update 机制
+2、购买幂等：通过数据库悲观 select for update 机制 ；stock 悲观锁版本号机制
 
 3、spring --transcation 保证账户转化 库存 订单生成的事务 
 
