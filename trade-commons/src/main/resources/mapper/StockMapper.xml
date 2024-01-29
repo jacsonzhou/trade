@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ybb.trade.mapper.StockMapper">
+
+    <resultMap id="BaseResultMap" type="com.ybb.trade.entity.Stock">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="skuId" column="sku_id" jdbcType="INTEGER"/>
+            <result property="stock" column="stock" jdbcType="INTEGER"/>
+            <result property="stockLock" column="stock_lock" jdbcType="INTEGER"/>
+            <result property="version" column="version" jdbcType="INTEGER"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,sku_id,stock,
+        stock_lock,version,create_time,
+        update_time
+    </sql>
+    <update id="updateStock">
+        update stock s set
+        s.stock  = s.stock - #{amount},
+        s.version = #{version} + 1
+        where s.stock >= #{amount}
+        and
+        s.id = #{id}
+         and
+         s.version = #{version}
+    </update>
+    <update id="increaseStock">
+        update stock s set
+                           s.stock  = s.stock  + #{amount},
+                           s.version = #{version} + 1
+        where
+            s.id = #{id}
+          and
+            s.version = #{version}
+    </update>
+</mapper>
