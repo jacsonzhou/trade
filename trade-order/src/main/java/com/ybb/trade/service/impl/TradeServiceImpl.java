@@ -54,7 +54,7 @@ public class TradeServiceImpl implements TradeService {
         Wallet buyer = walletService.getByMemberIdAndCurrency(memberId,currencyName);
         Wallet seller = walletService.getByMemberIdAndCurrency(sellerId,currencyName);
         if(buyer == null) {
-            throw new RuntimeException("商户账户异常");
+            throw new RuntimeException("买家账户异常");
         }
         if(seller == null) {
             throw new RuntimeException("商户账户异常");

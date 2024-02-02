@@ -10,6 +10,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class TradeController {
     @Autowired
     private TradeService tradeService;
+
+
+    /**
+     * 下单
+     * @param memberId
+     * @param name
+     * @param skuId
+     * @param sellerId
+     * @param amount
+     * @return
+     */
     @RequestMapping("/trade")
     public MessageResult trade(Long memberId,String name,Long skuId,
                                Long sellerId, Integer amount) {

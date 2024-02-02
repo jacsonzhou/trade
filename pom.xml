@@ -13,6 +13,9 @@
         <module>trade-order</module>
         <module>trade-admin</module>
         <module>trade-job</module>
+        <module>trade-ware</module>
+        <module>trade-cart</module>
+        <module>trade-gateway</module>
     </modules>
     <packaging>pom</packaging>
 
