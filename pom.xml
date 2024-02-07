@@ -16,6 +16,7 @@
         <module>trade-ware</module>
         <module>trade-cart</module>
         <module>trade-gateway</module>
+        <module>trade-product</module>
     </modules>
     <packaging>pom</packaging>
 
