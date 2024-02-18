@@ -24,4 +24,7 @@ public interface MemberService {
     MessageResult queryWallet(@PathVariable("coin")String coin,@RequestParam("memberId")Long memberId);
     @RequestMapping("/member/lock/wallet")
     MessageResult lockWallet(@RequestParam("coin")String coin,@RequestParam("memberId")Long memberId,@RequestParam("amount") BigDecimal amount,@RequestParam("orderSn")String orderSn);
+    @RequestMapping("/unlock/wallet")
+    public MessageResult unlockWallet(@RequestParam("coin")String coin,@RequestParam("memberId")Long memberId,
+                                      @RequestParam("amount")BigDecimal amount);
 }

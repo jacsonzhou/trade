@@ -79,7 +79,7 @@ public class UmsWalletServiceImpl extends ServiceImpl<UmsWalletMapper, UmsWallet
 
     @Override
     public int releaseWallet(String coin, Long memberId, BigDecimal amount) {
-        return 0;
+        return this.releaseWallet(coin,memberId,amount);
     }
 }
 

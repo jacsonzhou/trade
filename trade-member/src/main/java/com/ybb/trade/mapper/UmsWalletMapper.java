@@ -16,6 +16,7 @@ public interface UmsWalletMapper extends BaseMapper<UmsWallet> {
     int frozenBalance(@Param("coin") String coin, @Param("memberId") Long memberId, @Param("amount") BigDecimal amount);
     int defrozenBalance(@Param("coin") String coin, @Param("memberId") Long memberId, @Param("amount") BigDecimal amount);
     int releaseBalance(@Param("coin") String coin, @Param("memberId") Long memberId, @Param("amount") BigDecimal amount);
+    int decreaseFrozenBalance(@Param("coin") String coin, @Param("memberId") Long memberId, @Param("amount") BigDecimal amount);
 }
 
 

@@ -47,4 +47,15 @@ public class WalletController {
        }
 
     }
+    @RequestMapping("/unlock/wallet")
+    public MessageResult unlockWallet(@RequestParam("coin")String coin,@RequestParam("memberId")Long memberId,
+                                    @RequestParam("amount")BigDecimal amount) {
+        int update = umsWalletService.releaseWallet(coin,memberId,amount);
+        if(update > 0) {
+            return MessageResult.success();
+        }else {
+            return MessageResult.error("扣除失败");
+        }
+
+    }
 }

@@ -422,6 +422,25 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder>
         }
     }
 
+    /**
+     * 支付成功后做一张支付记录表 防止重复提交
+     * @param orderSn
+     * @param password
+     * @param memberId
+     */
+    @Override
+    public void payOrder(String orderSn, String password, Long memberId) {
+        OmsOrder omsOrder = this.getOrderByOrderSn(orderSn);
+        if(omsOrder == null) {
+            throw new RuntimeException("订单不存在");
+        }
+        // todo 校验支付密码
+        if(omsOrder.getStatus() == OrderStatusEnum.CREATE_NEW.getCode()) {
+            //todo 释放账户转化到商户
+            memberService.unlockWallet(omsOrder.getPayType(),memberId,omsOrder.getPayAmount());
+        }
+    }
+
 }
 
 

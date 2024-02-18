@@ -33,4 +33,6 @@ public interface OmsOrderService extends IService<OmsOrder> {
 
     void closeOrder(OmsOrder order);
 
+    void payOrder(String orderSn,String password,Long memberId);
+
 }
