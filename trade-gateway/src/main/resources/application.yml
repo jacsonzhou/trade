@@ -1,0 +1,51 @@
+server:
+  port: 88
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+
+
+    gateway:
+      routes:
+        - id: product_route
+          uri: lb://trade-product
+          predicates:
+              - Path=/api/product/**
+          filters:
+              - RewritePath=/api/(?<segment>/?.*),/$\{segment}
+
+        - id: member_route
+          uri: lb://trade-member
+          predicates:
+              - Path=/api/member/**
+          filters:
+              - RewritePath=/api/(?<segment>/?.*),/$\{segment}
+        - id: cart_route
+          uri: lb://trade-cart
+          predicates:
+              - Path=/api/cart/**
+          filters:
+                - RewritePath=/api/(?<segment>/?.*),/$\{segment}
+        - id: ware_route
+          uri: lb://trade-ware
+          predicates:
+              - Path=/api/ware/**
+          filters:
+                - RewritePath=/api/(?<segment>/?.*),/$\{segment}
+        - id: order_route
+          uri: lb://trade-order
+          predicates:
+              - Path=/api/order/**
+          filters:
+                - RewritePath=/api/(?<segment>/?.*),/$\{segment}
+  application:
+    name: gateway
+#暴露所有端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+

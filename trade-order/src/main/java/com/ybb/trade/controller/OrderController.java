@@ -4,7 +4,6 @@ import com.ybb.trade.common.MessageResult;
 import com.ybb.trade.common.PageUtils;
 import com.ybb.trade.entity.OmsOrder;
 import com.ybb.trade.service.OmsOrderService;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
