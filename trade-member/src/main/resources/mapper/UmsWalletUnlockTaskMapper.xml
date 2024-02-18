@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ybb.trade.mapper.UmsWalletUnlockTaskMapper">
+
+    <resultMap id="BaseResultMap" type="com.ybb.trade.entity.UmsWalletUnlockTask">
+            <result property="id" column="id" jdbcType="BIGINT"/>
+            <result property="memberId" column="member_id" jdbcType="BIGINT"/>
+            <result property="amount" column="amount" jdbcType="DECIMAL"/>
+            <result property="coin" column="coin" jdbcType="CHAR"/>
+            <result property="orderSn" column="order_sn" jdbcType="CHAR"/>
+            <result property="taskStatus" column="task_status" jdbcType="TINYINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,member_id,amount,
+        coin,order_sn,task_status,
+        create_time
+    </sql>
+</mapper>

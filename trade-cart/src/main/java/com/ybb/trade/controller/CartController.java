@@ -1,18 +1,18 @@
 package com.ybb.trade.controller;
 
 import com.ybb.trade.common.MessageResult;
+import com.ybb.trade.entity.AuthMember;
 import com.ybb.trade.service.CartService;
 import com.ybb.trade.vo.CartItemVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+
+import static com.ybb.trade.constant.SysConstant.SESSION_MEMBER;
 
 
 @RestController
@@ -25,35 +25,32 @@ public class CartController {
      */
     @GetMapping(value = "/currentUserCartItems")
     @ResponseBody
-    public MessageResult getCurrentCartItems(Long memberId) {
-
-        List<CartItemVo> cartItemVoList = cartService.listCartItem(memberId);
+    public MessageResult getCurrentCartItems(@SessionAttribute(SESSION_MEMBER) AuthMember member) {
+        List<CartItemVo> cartItemVoList = cartService.listCartItem(member.getId());
         return MessageResult.success(cartItemVoList);
     }
 
 
     @GetMapping(value = "/addCartItem")
+    @ResponseBody
     public MessageResult addCartItem(@RequestParam("skuId") Long skuId,
-                              @RequestParam("num") Integer num,
-                              @RequestParam("memberId")Long memberId){
-
-        List<CartItemVo> list = cartService.addCart(skuId,memberId,num);
+                                     @RequestParam("num") Integer num,
+                                     @SessionAttribute(SESSION_MEMBER) AuthMember member){
+        List<CartItemVo> list = cartService.addCart(skuId,member.getId(),num);
         return MessageResult.success(list);
     }
     /**
      * 商品是否选中
      * @param skuId
      * @param checked
-     * @param memberId
      * @return
      */
     @GetMapping(value = "/checkItem")
+    @ResponseBody
     public MessageResult checkItem(@RequestParam(value = "skuId") Long skuId,
-                            @RequestParam(value = "memberId") Long memberId,
-                            @RequestParam(value = "checked") Integer checked) {
-
-        List<CartItemVo> list = cartService.checkItem(memberId,skuId,checked);
-
+                                   @SessionAttribute(SESSION_MEMBER) AuthMember member,
+                                   @RequestParam(value = "checked") Integer checked) {
+        List<CartItemVo> list = cartService.checkItem(member.getId(),skuId,checked);
         return MessageResult.success(list);
 
     }
@@ -66,11 +63,11 @@ public class CartController {
      * @return
      */
     @GetMapping(value = "/countItem")
+    @ResponseBody
     public MessageResult countItem(@RequestParam(value = "skuId") Long skuId,
                             @RequestParam(value = "num") Integer num,
-                                   @RequestParam(value = "memberId") Long memberId) {
-
-        List<CartItemVo> list = cartService.updateItemCount(memberId,skuId,num);
+                                   @SessionAttribute(SESSION_MEMBER) AuthMember member) {
+        List<CartItemVo> list = cartService.updateItemCount(member.getId(),skuId,num);
 
         return MessageResult.success(list);
     }
@@ -82,13 +79,18 @@ public class CartController {
      * @return
      */
     @GetMapping(value = "/deleteItem")
+    @ResponseBody
     public MessageResult deleteItem(@RequestParam("skuId") Long skuId,
-                             @RequestParam("memberId") Long memberId) {
-
-        List<CartItemVo> list = cartService.deleteCart(skuId,memberId);
-
+                                    @SessionAttribute(SESSION_MEMBER) AuthMember member) {
+        List<CartItemVo> list = cartService.deleteCart(skuId, member.getId());
         return MessageResult.success(list);
-
+    }
+    @RequestMapping(value = "/clearCartItem")
+    @ResponseBody
+    public MessageResult clearCartItem(@SessionAttribute(SESSION_MEMBER) AuthMember member) {
+        Long memberId = member.getId();
+        cartService.clearCartItem(memberId);
+        return MessageResult.success();
     }
 
 }

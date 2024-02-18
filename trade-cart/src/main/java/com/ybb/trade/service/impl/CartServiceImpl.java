@@ -47,9 +47,9 @@ public class CartServiceImpl implements CartService {
         }
         BoundHashOperations<String, Object, Object> cartOps = getCartOps(memberId);
         //判断Redis是否有该商品的信息
-        String productRedisValue = (String) cartOps.get(skuId);
+        String productRedisValue = (String) cartOps.get(skuId.toString());
         if(StringUtils.isEmpty(productRedisValue)) {
-            SkuInfoVo skuInfoVo = JSON.parseObject((String) messageResult.getData(), new TypeReference<SkuInfoVo>() {}) ;
+            SkuInfoVo skuInfoVo = JSON.parseObject(JSON.toJSONString(messageResult.getData()), new TypeReference<SkuInfoVo>() {}) ;
             CartItemVo cartItemVo = CartItemVo.builder().check(true)
                     .count(amount)
                     .check(true)
@@ -110,14 +110,33 @@ public class CartServiceImpl implements CartService {
     @Override
     public List<CartItemVo> updateItemCount(Long memberId, Long skuId, Integer amount) {
         BoundHashOperations<String, Object, Object> cartOps = getCartOps(memberId);
-        String redisItemValue = (String) cartOps.get(skuId);
+        String redisItemValue = (String) cartOps.get(skuId.toString());
         if(!StringUtils.isEmpty(redisItemValue)) {
             CartItemVo cartItemVo = JSON.parseObject(redisItemValue,new TypeReference<CartItemVo>(){});
             cartItemVo.setCount(amount);
-            cartOps.put(skuId, JSON.toJSONString(cartItemVo));
+            cartOps.put(skuId.toString(), JSON.toJSONString(cartItemVo));
         }
         return listCartItem(memberId);
     }
+
+    /**
+     * 清除购物车逻辑：check==true  delete
+     * @param memberId
+     */
+    @Override
+    public void clearCartItem(Long memberId) {
+        BoundHashOperations<String, Object, Object> cartOps = getCartOps(memberId);
+        // 获取 key 集合
+        Set<Object> keys = cartOps.keys();
+        List<CartItemVo> list = new ArrayList<>();
+        for (Object skuId : keys) {
+            CartItemVo cartItemVo = JSON.parseObject((String) cartOps.get(skuId),new TypeReference<CartItemVo>(){});
+            if(cartItemVo.getCheck() == true) {
+                cartOps.delete(skuId.toString());
+            }
+        }
+    }
+
     public  BoundHashOperations<String, Object, Object> getCartOps(Long memberId) {
         String cartKey = "user:" + memberId + ":cart";
         BoundHashOperations<String, Object, Object> cartOps = redisTemplate.boundHashOps(cartKey);

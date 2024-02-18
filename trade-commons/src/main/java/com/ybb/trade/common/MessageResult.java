@@ -4,11 +4,14 @@ import lombok.Data;
 
 @Data
 public class MessageResult {
+    private static final long serialVersionUID = 1L;
 
     private int code;
     private String message;
     private Object data;
+    public MessageResult() {
 
+    }
     public MessageResult(int code, String msg, Object object) {
         this.code = code;
         this.message = msg;

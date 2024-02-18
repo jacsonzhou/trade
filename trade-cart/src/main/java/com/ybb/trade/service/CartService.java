@@ -10,4 +10,5 @@ public interface CartService {
     List<CartItemVo> listCartItem(Long memberId);
     List<CartItemVo> checkItem(Long memberId,Long skuId,int checked);
     List<CartItemVo> updateItemCount(Long memberId,Long skuId,Integer amount);
+    void clearCartItem(Long memberId);
 }
