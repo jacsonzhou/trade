@@ -20,7 +20,7 @@ public class OmsOrder implements Serializable {
     /**
      * id
      */
-    @TableId(type = IdType.AUTO)
+//    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**

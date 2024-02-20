@@ -216,7 +216,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder>
         OmsOrder orderEntity = builderOrder(payWay,orderSn,member);
 
         //2、获取到所有的订单项
-        List<OmsOrderItem> orderItemEntities = builderOrderItems(orderSn);
+        List<OmsOrderItem> orderItemEntities = builderOrderItems(orderSn,member.getId());
 
         //3、验价(计算价格、积分等信息)
         computePrice(orderEntity, orderItemEntities);
@@ -276,7 +276,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder>
 
     }
 
-    private List<OmsOrderItem> builderOrderItems(String orderSn) {
+    private List<OmsOrderItem> builderOrderItems(String orderSn,Long memberId) {
         List<OmsOrderItem> orderItemEntityList = new ArrayList<>();
         MessageResult messageResult = cartService.getCurrentCartItems();
         //最后确定每个购物项的价格
@@ -286,7 +286,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder>
             if (currentCartItems != null && currentCartItems.size() > 0) {
                 orderItemEntityList = currentCartItems.stream().map((items) -> {
                     //构建订单项数据
-                    OmsOrderItem orderItemEntity = builderOrderItem(items);
+                    OmsOrderItem orderItemEntity = builderOrderItem(items,memberId);
                     orderItemEntity.setOrderSn(orderSn);
                     return orderItemEntity;
                 }).collect(Collectors.toList());
@@ -295,7 +295,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder>
         return orderItemEntityList;
     }
 
-    private OmsOrderItem builderOrderItem(OrderItemVo items) {
+    private OmsOrderItem builderOrderItem(OrderItemVo items,Long memberId) {
 
         OmsOrderItem orderItemEntity = new OmsOrderItem();
 
@@ -308,7 +308,7 @@ public class OmsOrderServiceImpl extends ServiceImpl<OmsOrderMapper, OmsOrder>
         orderItemEntity.setSpuName(spuInfoData.getSpuName());
         orderItemEntity.setSpuBrand(spuInfoData.getBrandName());
         orderItemEntity.setCategoryId(spuInfoData.getCatalogId());
-
+        orderItemEntity.setMemberId(memberId);
         //2、商品的sku信息
         orderItemEntity.setSkuId(skuId);
         orderItemEntity.setSkuName(items.getTitle());

@@ -19,13 +19,15 @@ public class OmsOrderItem implements Serializable {
     /**
      * id
      */
-    @TableId(type = IdType.AUTO)
+//    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
      * order_id
      */
     private Long orderId;
+
+    private Long memberId;
 
     /**
      * order_sn

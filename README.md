@@ -1,171 +1,71 @@
 1、数据库设计 文件地址/trade/doc下
 
-2、项目模块说明
+2、架构项目模块说明
+
+---------  trade-cart 购物车模块：添加 删除购物车 购物车列表等；
 
 ---------  trade-admin 后台管理api :上下架商品 新增sku等等商家操作
 
+---------   trade-gateway 网关服务
+
 ---------  trade-commons 公共包 各个包引即可；
 
----------  trade-member 用户管理 登录注册账户生成 充值 体现之类操作
+---------  trade-member 用户管理 账户生成，登录注册账户生成 充值 提现现之类操作
 
----------  trade-order 用户购买操作：购买支付扣库存生成订单
+---------  trade-order 用户购买操作：下单，支付，订单状态等维护；
+
+---------  trade-ware 库存模块，库存暂扣，订单超时未支付库存回滚等；
+
+---------  trade-product 商品服务模块；
 
 ---------  trade-job 风控系统 独立部署即可；
 
 
 
-nginx 
+nginx 将请求转发到网关
 
-      ----->  /order 转发到下单模块      
-
-      ----->  /member 转发到用户模块
-
-      ----->  /admin 转发到商户后台模块
-
-
-
-
-
-
-
-
-
-
-
+upstream gateway_cluster {
+server 192.168.1.3:88;
+}
 server {
+listen       80; #不用80端口可绕过备案
+server_name  www.trade.com;
 
-    listen       80;
-
-    server_name  localhost;
-
+    #charset koi8-r;
     #access_log  /var/log/nginx/host.access.log  main;
 
-
-
-    location / {
-
-        root   /usr/share/nginx/html;
-
+    location /static/ {
+        root   D:/;
         index  index.html index.htm;
-
     }
 
-
-
-    server_name locahost;
-
-    location /member {
-
-          client_max_body_size    5m;
-
-        proxy_pass http://localhost:6001;
-
-        proxy_set_header Host $host;
-
-        proxy_set_header X-Real-IP $remote_addr;
-
-    }
-
-    location /order {
-
+	location / {
         client_max_body_size    5m;
-
-        proxy_pass http://localhost:7001;
-
+        proxy_pass http://gateway_cluster;
         proxy_set_header Host $host;
-
         proxy_set_header X-Real-IP $remote_addr;
-
     }
-
-
-
-    location /admin {
-
-        client_max_body_size    5m;
-
-        proxy_pass http://localhost:6002;
-
-        proxy_set_header Host $host;
-
-        proxy_set_header X-Real-IP $remote_addr;
-
-    }
-
-    error_page   500 502 503 504  /50x.html;
-
-    location = /50x.html {
-
-        root   /usr/share/nginx/html;
-
-    }
-
 }
-
-
-
-
+相关中间件：
+nacos注册中心
+redis-cluster 商品缓存服务|购物车服务|分布式session服务|分布式锁服务
+rabbit-mq 超时关单服务：订单超时自动解锁，mq通知账户服务，库存服务，进行响应解锁
+gate-way：网关路由匹配
 
 
 
 功能点：
-
-1、账户注册 生成多货币账户；后续新加入货币，使用定时任务生成或者脚本；
-
-2、购买幂等：通过数据库悲观 select for update 机制 ；stock 悲观锁版本号机制
-
-3、spring --transcation 保证账户转化 库存 订单生成的事务 
-
-4、账户redis缓存 hash结构 member:1001   2020-02-14 {"usd":100,"cny":100,"jpy":100};
-
-5、一个初始的多模块项目；
-
-6、多商户-多货币支付充值版本，用户申请成为商户
-
+1、nginx + gateway + nacos注册中线 + rabbitmq + redis + springcloud微服务架构
+2、spring-session解决分布式session问题，解决openfeign远程调用消息头丢失问题；
+3、账户注册 生成多货币账户：usdt,btc等后续新加入货币，使用定时任务生成或者脚本；
+4、购物车redis hash数据结构 k1:member_id k2:sku_id
+5、rabbit实现延时关单功能：超时支付关闭订单，回滚库存服务和积分账户余额服务，解决订单服务回滚，库存服务，账户服务持久化mq后的补偿机制；
+6、token机制保证下单幂等，数据库唯主键约束保证支付结算幂等；
+7、spring --transcation 保证下单的事务操作；
+8、风控系统 ： 账户redis缓存 hash结构 member:1001   2020-02-14 {"usd":100,"cny":100,"jpy":100};
 ------------------------------------------------------
 
-后续加入
 
-gateway网关，由网关分发；
-
-member服务加入登录注册功能；
-
-库存模块拆分成独立服务； 由下单服务远程调用；
-
-下单服务拆分，拆分成下单 ---> 支付服务 : 产品层面也要相应的调整；原因：下单事务周期大，大并发大流量造成数据库死锁；
-
-下单服务：使用分布式事务seata
-
-下单：分布式事务
-
-{
-
-资金暂扣：balance--->frozenBalance;
-
-库村暂扣  stock-->stock_lock; 调用库存服务；30分钟未支付 回滚； //由openfeign远程调度
-
-订单生成  status 未支付；
-}
-
-支付： {
-
-用户冻结释放；
-
-资金划到商家；
-
-库存释放；
-
-}
-
-网关加入 支持负载均衡搞可用；
-
-redis cluster模式；
-
-数据库主备 分库分表；
-
-多实例场景下 分布式锁；
-
---------------------------------------------------------
 
 
 

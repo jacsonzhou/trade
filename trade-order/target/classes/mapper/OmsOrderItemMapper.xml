@@ -7,6 +7,7 @@
     <resultMap id="BaseResultMap" type="com.ybb.trade.entity.OmsOrderItem">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="orderId" column="order_id" jdbcType="BIGINT"/>
+             <result property="memberId" column="member_id" jdbcType="BIGINT"/>
             <result property="orderSn" column="order_sn" jdbcType="CHAR"/>
             <result property="spuId" column="spu_id" jdbcType="BIGINT"/>
             <result property="spuName" column="spu_name" jdbcType="VARCHAR"/>
@@ -28,7 +29,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,order_id,order_sn,
+        id,order_id,member_id,order_sn,
         spu_id,spu_name,spu_pic,
         spu_brand,category_id,sku_id,
         sku_name,sku_pic,sku_price,
